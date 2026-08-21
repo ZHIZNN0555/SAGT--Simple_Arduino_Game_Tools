@@ -1,22 +1,29 @@
 #include <Arduino.h>
 //#include <SAGT_Music.h>
+#define INDEX(a, b, c) ( ( (a) * (c) ) + (b) )
 
-void Music::newArr(short*& arr, uint16_t rows_, uint8_t cols_) {
+void Music::newArr(short*& arr, uint8_t rows_, uint16_t cols_) {
   arr = (short*)malloc( (uint16_t)cols_ * rows_ * sizeof(short) );
   cols = cols_;
   rows = rows_;
 }
+
+//==============================================================================
 
 void Music::deleteArr(short*& arr) {
   free(arr);
   arr = nullptr;
 }
 
-uint16_t Music::index(uint16_t rows_, uint8_t cols_) {
+//==============================================================================
+
+uint16_t Music::index(uint8_t rows_, uint16_t cols_) {
   return rows_ * cols + cols_;
 }
 
-Music::Music(uint16_t size, const short **musicArr, uint8_t pin) {
+//==============================================================================
+
+Music::Music(uint16_t size, const uint16_t* musicArr_P, uint8_t pin) {
   if(size > MUSIC_MAX_USE_SRAM){
     Serial.println("!Warning! Array is too big for music! Acceptable max size arr 150x2 elements");
     if(display) {
@@ -28,33 +35,43 @@ Music::Music(uint16_t size, const short **musicArr, uint8_t pin) {
         noTone(pin);
         delay(500);
       }
+
     }
     crash = true;
-    return;
+
+    //#error "Array is too big for music! Acceptable max size arr 150x2 elements"
   }
   speaker = pin;
 
-  newArr(copy_music, 2, size);
+  newArr(copy_music, 2, size/4-2);
 
-  for(uint16_t i = 0; i < cols; i++){
-    copy_music[index(0, i)] = pgm_read_word( &musicArr_P[0][i] );
-    copy_music[index(1, i)] = pgm_read_word( &musicArr_P[1][i] );
+  for(uint8_t i = 0; i < rows; i++) {
+
+    for(uint16_t j = 0; j < cols; j++){
+      copy_music[ INDEX(i, j, cols) ] = pgm_read_word( &musicArr_P[ INDEX(i, j, cols) ] );
+    }
   }
-  Serial.print("Musical class using "); Serial.print(size * 2 + 14); Serial.println(" bytes, leaving "); Serial.println("Music arr");
-  for(int i = 0; i < cols; i++){
-    for(int j = 0; j < rows; j++) {
+
+  Serial.print("Musical class using "); Serial.print(size + 14); Serial.println(" bytes, leaving "); Serial.println("Music arr");
+  /*
+  for(int i = 0; i < rows; i++){
+    for(int j = 0; j < cols; j++) {
       Serial.print(copy_music[index(i, j)]);
     }
     Serial.print('\n');
   }
-  start_ = millis();
+  */
 
 }
+
+//==============================================================================
 
 Music::Music(){
   crash = true;
   Serial.print("???");
 }
+
+//==============================================================================
 
 void Music::start(){
   if(crash) return;
@@ -62,60 +79,68 @@ void Music::start(){
   delay_ = millis();
 }
 
+//==============================================================================
+
 void Music::update(){
-  start_ = millis();
+  //start_ = millis();
 
   if(crash) return;
 
   if(i >= cols) {
     i = 0;
-    Serial.println("next note");
+    //Serial.println("next note");
   }
 
-  if(millis() - delay_ >= copy_music[index(1, i)] ) {
-    tone(speaker, copy_music[index(0, i)] );
+  if(millis() - delay_ >= copy_music[INDEX(1, i, cols)] ) {
+    tone(speaker, copy_music[ INDEX(0, i, cols) ] );
     delay_ = millis();
-    i++;
+    i = (i % cols) + 1;
   }
 }
+
+//==============================================================================
 
 uint16_t Music::len(){
     return cols;
 }
 
+//==============================================================================
+
 void Music::log() {
-  if(delay_ == 0) {
-    Serial.print( f("Music class is ") );
+  if(start_ == 0) {
+    Serial.print( F("Music class is ") );
     if(!crash) {
-      Serial.println( f("work.") );
+      Serial.println( F("work.") );
     }
     else {
-      Serial.println( f("not work.") );
+      Serial.println( F("not work.") );
     }
 
     if(!crash) {
-      Serial.print( f("Using ") ); Serial.print(cols * rows); Serial.println( f(" bytes.") );
+      Serial.print( F("Using ") ); Serial.print(cols * rows * 2); Serial.println( F(" bytes.") );
 
-      Serial.println( f("Which class contains the data:") )
-      Serial.println( f("{") )
+      Serial.println( F("Which class contains the data:") );
+      Serial.println( F("{") );
       for(int i = 0; i < 2; i++) {
-        Serial.print( f("[") )
-        for(int j = 0; j < rows; j++) {
-          Serial.print( copy_music[ index(i, j) ] );
-          Serial.print( f(" ") );
+        Serial.print( F("[") );
+        for(int j = 0; j < cols; j++) {
+          Serial.print( copy_music[ INDEX(i, j, cols) ] );
+          Serial.print( F(" ") );
         }
-        Serial.println( f("]") );
+        Serial.println( F("]") );
       }
-      Serial.println( f("}") );
+      Serial.println( F("}") );
     }
   }
   else {
-    Serial.print( f("Note #") ); Serial.println(i); Serial.print( f(".") );
-    if(i == 1) Serial.println( f("Melody repetition.") );
+    Serial.print( F("Note #") ); Serial.println(i); Serial.print( F(".") );
+    if(i == 1) Serial.println( F("Melody repetition.") );
 
-    if(millis() - start_ > 300) Serial.println( f("Having too long delay") );
+    if(millis() - start_ > 200) Serial.println( F("!!!_Having too long delay_!!!") );
   }
 }
+
+//==============================================================================
 
 Music::~Music() {
   if(!crash) {
