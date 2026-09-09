@@ -1,10 +1,10 @@
 #include <Arduino.h>
-//#include <SAGT_Music.h>
+#include <SAGT_Music.h>
 #define INDEX(a, b, c) ( ( (a) * (c) ) + (b) )
 
 void Music::newArr(short*& arr, uint8_t rows_, uint16_t cols_) {
   arr = (short*)malloc( (uint16_t)cols_ * rows_ * sizeof(short) );
-  cols = cols_;
+  cols = cols_ - 2;
   rows = rows_;
 }
 
@@ -43,7 +43,7 @@ Music::Music(uint16_t size, const uint16_t* musicArr_P, uint8_t pin) {
   }
   speaker = pin;
 
-  newArr(copy_music, 2, size/4-2);
+  newArr(copy_music, 2, size/4);
 
   for(uint8_t i = 0; i < rows; i++) {
 
@@ -147,3 +147,6 @@ Music::~Music() {
     deleteArr(copy_music);
   }
 }
+
+
+#pragma message "Included SAGT_Music.h"

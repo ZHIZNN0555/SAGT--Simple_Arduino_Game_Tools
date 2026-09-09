@@ -1,6 +1,5 @@
 #include "Arduino.h"
-#include "GameButtonsTool.h"
-
+#include <SAGT_Buttons.h>
 
   Button Button::&add(byte pin) {
     if (this->index == NUM) return *this;
@@ -12,8 +11,10 @@
     return *this;
   }
 
-  uint8_t Button::IsPress(){
-    index = 0;
+
+  uint8_t Button::IsPress_Task(){
+    index %= NUM + 1;
+    /*
     while(index != NUM){
       switch( digitalRead(buttonList[index]) ){
         case 0:
@@ -22,8 +23,10 @@
           index++;
       }
     }
-    index = 0;
-    return 0;
+    */
+
+
+    return !digitalRead(buttonList[index]) * index;
   }
 
   bool Button::IsPress(uint8_t button){
@@ -36,8 +39,10 @@
     }
   }
   
-  bool Button::IsPressRaw(uint8_t button) {
+  bool Button::IsPress_Raw(uint8_t button) {
     return !digitalRead(button);
   }
 
 
+
+  #pragma message "Included SAGT_Buttons.h"

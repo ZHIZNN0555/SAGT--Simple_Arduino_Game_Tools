@@ -1,6 +1,4 @@
-#if !LiquidCrystal_PCF8574
-#include LiquidCrystal_PCF8574;
-#endif
+#include <SAGT_NPC.h>
 
 class NPC{
   byte x, old_x;
@@ -106,3 +104,6 @@ class NPC{
     lcd.write(sprite3);
   }
 };
+
+
+#pragma message "Included didn't ready SAGT_NPC.h"

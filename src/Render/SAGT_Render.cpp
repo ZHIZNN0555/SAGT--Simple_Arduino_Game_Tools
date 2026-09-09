@@ -109,3 +109,6 @@ Render::~Render() {
     spritebuffer = nullptr;
     mapbuffer = nullptr;
 }
+
+
+#pragma message "Included SAGT_Render.h"

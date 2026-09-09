@@ -45,7 +45,7 @@ class Music{          //класс музыкального сопровожде
   
 };
 
-#include "SAGT_Music.cpp"
+//#include "SAGT_Music.cpp"
 
 
 

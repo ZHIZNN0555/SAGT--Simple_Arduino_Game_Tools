@@ -1,5 +1,4 @@
 #ifndef LiquidCrystal_PCF8574_h
-#include <LiquidCrystal_PCF8574.h>
 #endif
 
 class NPC{

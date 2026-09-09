@@ -1,7 +1,8 @@
-#ifdef SAGT_Buttons_
+#ifndef SAGT_Buttons_
 #define SAGT_Buttons_
 
-template<size_t NUM> //занимает 3+ байт оперативной памяти
+
+ //занимает 3+ байт оперативной памяти
 class Button{
   private:
 
@@ -9,7 +10,14 @@ class Button{
   //uint8_t  flagList[NUM];
   uint8_t  index = 0;
 
+  uint8_t * arr = nullptr;
+
   unsigned long timer;
+
+  /*
+  void createArr(uint8_t);
+  void deleteArr();
+  */
   
   
   public:
@@ -31,7 +39,7 @@ class Button{
   }*/
   Button &add(byte pin);
 
-  uint8_t IsPress();
+  uint8_t IsPress_Task();
 
   bool IsPress(uint8_t button);
 
@@ -46,6 +54,9 @@ class Button{
     }
   }*/
   
-  bool IsPressRaw(uint8_t button);
+  bool IsPress_Raw(uint8_t button);
 };
+
+//#include "SAGT_Buttons.cpp"
+
 #endif
