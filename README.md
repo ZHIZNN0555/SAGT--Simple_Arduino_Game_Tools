@@ -1,5 +1,10 @@
-# SAGT--Simple_Arduino_Game_Tools
-This is a set of libraries written or rewritten specifically for creating simple games on the Arduino microcontroller.
+## SAGT - Simple Arduino Game Tools
+This is a set of libraries make specifically for creating simple games on the Arduino microcontroller.
+
+## Features
+- It can play music and sounds without connecting external modules.
+- It can accept user input. **(WIP)**
+- It has a base for creating characters. **(WIP)**
 
 ## Dependencies
 
@@ -11,4 +16,6 @@ This project uses the following third-party library:
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2026 ZHIZNN0555.
